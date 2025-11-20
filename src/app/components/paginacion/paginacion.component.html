@@ -1,0 +1,57 @@
+<div
+  class="paginacion-container mx-auto p-4 bg-white  rounded-xl shadow-xl border border-gray-100  font-sans max-w-5xl">
+
+  <!-- Contenedor Flex para la disposición en diferentes tamaños de pantalla -->
+  <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+
+    <!-- 1. Controles de Items por Página -->
+    <div class="items-por-pagina flex items-center gap-2 text-gray-600 ">
+      <label for="itemsPorPagina" class="font-medium whitespace-nowrap">Resultados por página:</label>
+      <select id="itemsPorPagina" [ngModel]="itemsPorPagina" (change)="onItemsPorPaginaChange($event)"
+        class="border border-gray-300  rounded-lg p-2 text-sm bg-gray-50 d appearance-none focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out cursor-pointer">
+        <option *ngFor="let option of [10, 25, 50, 100]" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <!-- 2. Controles de Paginación Centrales -->
+    <div class="controles-paginacion flex items-center justify-center gap-1">
+
+      <!-- Botón Anterior -->
+      <button (click)="onPaginaAnterior()" [disabled]="paginaActual === 1" class="px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed 
+               bg-blue-50  text-blue-600  hover:bg-blue-100  shadow-sm">
+        &laquo; Anterior
+      </button>
+
+      <!-- Botones de Página y Elipsis -->
+      <ng-container *ngFor="let pagina of paginas">
+        <button
+          *ngIf="pagina === 1 || pagina === totalPaginas || (pagina >= paginaActual - 2 && pagina <= paginaActual + 2)"
+          (click)="onIrAPagina(pagina)" [class]="{ 
+            'px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 ease-in-out min-w-[36px]': true,
+            'bg-blue-600 text-white shadow-md hover:bg-blue-700': pagina === paginaActual,
+            'bg-gray-100  text-gray-700  hover:bg-gray-200 ': pagina !== paginaActual
+          }">
+          {{ pagina }}
+        </button>
+        <!-- Elipsis -->
+        <span
+          *ngIf="(pagina === 2 && paginaActual > 5) || (pagina === totalPaginas - 1 && paginaActual < totalPaginas - 4)"
+          class="text-gray-500  mx-1 select-none">
+          ...
+        </span>
+      </ng-container>
+
+      <!-- Botón Siguiente -->
+      <button (click)="onPaginaSiguiente()" [disabled]="paginaActual === totalPaginas" class="px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed 
+               bg-blue-50  text-blue-600  hover:bg-blue-100 shadow-sm">
+        Siguiente &raquo;
+      </button>
+    </div>
+
+    <!-- 3. Información de Paginación -->
+    <div class="info-paginacion text-gray-500 font-light text-center sm:text-right w-full sm:w-auto">
+      Página {{ paginaActual }} de {{ totalPaginas }} ({{ totalResultados }} resultados)
+    </div>
+  </div>
+
+</div>

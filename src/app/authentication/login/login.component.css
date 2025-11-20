@@ -1,0 +1,22 @@
+.border-svg {
+    transform-origin: center center;
+    animation: rotateSVG 8s linear infinite;
+    /* z-index ya lo hemos aplicado en el HTML */
+  }
+  
+  /* Solo animamos el trazo: */
+.border-rect {
+    stroke-dasharray: 2800;    /* perímetro aproximado */
+    stroke-dashoffset: 2800;
+    stroke-width: 6;           /* grosor visible */
+    stroke-linejoin: round;
+    animation: drawBorder 4s linear infinite;
+  }
+  
+  /* Keyframes únicamente para el “dibujo” del borde */
+  @keyframes drawBorder {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  

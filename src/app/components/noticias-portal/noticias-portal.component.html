@@ -1,0 +1,186 @@
+<!-- src/app/components/noticias-portal/noticias-portal.component.html -->
+
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <!-- Header corregido - Reemplaza todo el header en noticias-portal.component.html -->
+    <header class="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+
+                <!-- Logo/Título -->
+                <h1 class="text-3xl font-bold text-gray-900">Portal de Noticias</h1>
+
+                <!-- Centro: Trending + Contador -->
+                <div class="flex items-center space-x-4">
+                    <!-- Botón Trending -->
+                    <button (click)="onToggleTrending()"
+                        class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                        <span class="font-medium">Trending</span>
+                    </button>
+                    <button (click)="planesModal.abrirModal()" class="btn-premium">
+                        Ver Planes
+                    </button>
+
+                    <!-- Modal -->
+                    <app-planes-modal #planesModal></app-planes-modal>
+                    <!-- Contador de noticias -->
+                    <span class="text-sm text-gray-500 hidden sm:inline">
+                        {{noticias.length}} noticias encontradas
+                    </span>
+                </div>
+
+                <!-- Derecha: Botones de Auth / Usuario -->
+                <div class="flex items-center gap-3 flex-shrink-0">
+
+                    <!-- Botones cuando NO está logueado -->
+                    <ng-container *ngIf="!isLoggedIn()">
+                        <button routerLink="/auth/login"
+                            class="px-4 py-2 hover:bg-gray-100 rounded-lg text-gray-700 font-medium transition-colors">
+                            Ingresar
+                        </button>
+                        <button routerLink="/auth/register"
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-md">
+                            Registrarse
+                        </button>
+                    </ng-container>
+
+                    <!-- Dropdown cuando SÍ está logueado -->
+                    <ng-container *ngIf="isLoggedIn()">
+                        <div class="relative">
+                            <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown23"
+                                class="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                                    <i class="fa-solid fa-user text-white text-sm"></i>
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 hidden sm:inline">Mi Cuenta</span>
+                                <i class="fas fa-chevron-down text-gray-600 text-xs"></i>
+                            </button>
+
+                            <!-- Dropdown menu -->
+                            <div id="dropdown23"
+                                class="z-10 hidden bg-white rounded-xl shadow-lg border border-gray-100 w-56 overflow-hidden absolute right-0 mt-2">
+                                <div class="py-2">
+                                    <!-- Opción 1 -->
+                                    <button routerLink="/favoritos"
+                                        class="flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors text-sm">
+                                        <i class="fas fa-bookmark text-gray-400 w-4"></i>
+                                        <span>Mis Favoritos</span>
+                                    </button>
+
+                                    <!-- Opción 2 -->
+                                    <button routerLink="/historial"
+                                        class="flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors text-sm">
+                                        <i class="fas fa-clock text-gray-400 w-4"></i>
+                                        <span>Historial</span>
+                                    </button>
+
+                                    <!-- Opción 3 -->
+                                    <button
+                                        class="flex items-center gap-3 w-full px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors text-sm">
+                                        <i class="fas fa-cog text-gray-400 w-4"></i>
+                                        <span>Configuración</span>
+                                    </button>
+
+                                    <!-- Divider -->
+                                    <div class="h-px bg-gray-100 my-1"></div>
+
+                                    <!-- Cerrar sesión -->
+                                    <button (click)="logout()"
+                                        class="flex items-center gap-3 w-full px-4 py-2.5 text-red-600 hover:bg-red-50 transition-colors text-sm">
+                                        <i class="fas fa-sign-out-alt text-red-500 w-4"></i>
+                                        <span>Cerrar sesión</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+
+            <!-- Sidebar con filtros -->
+            <app-filtros-sidebar [filtros]="filtros" [categorias]="opcionesFiltros.categorias"
+                [paises]="opcionesFiltros.paises" [regiones]="opcionesFiltros.regiones"
+                [ciudades]="opcionesFiltros.ciudades" [tiposNoticia]="opcionesFiltros.tiposNoticia"
+                [idiomas]="opcionesFiltros.idiomas" [fuentes]="opcionesFiltros.fuentes"
+                (filtrosChange)="onFiltrosChange($event)" (rangoTiempoChange)="onRangoTiempoChange($event)"
+                (limpiarFiltros)="onLimpiarFiltros()"></app-filtros-sidebar>
+
+            <!-- Contenido principal -->
+            <main class="flex-1">
+                <!-- Panel Trending -->
+                <app-trending-panel [mostrar]="mostrarTrending" [noticias]="noticiasTrending"
+                    (cerrar)="onCerrarTrending()"></app-trending-panel>
+
+                <!-- Ordenamiento -->
+                <div class="bg-white rounded-lg shadow p-4 mb-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div class="flex items-center space-x-4">
+                            <label class="text-sm font-medium text-gray-700">Ordenar por:</label>
+                            <select [ngModel]="ordenamiento.campo" (ngModelChange)="onOrdenamientoChange($event)"
+                                class="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="fecha_publicacion">Fecha de publicación</option>
+                                <option value="fecha_registro">Fecha de registro</option>
+                                <option value="titulo">Título</option>
+                                <option value="categoria">Categoría</option>
+                                <option value="pais">País</option>
+                            </select>
+                            <button (click)="onToggleDireccion()"
+                                class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-md transition duration-200">
+                                {{ordenamiento.direccion === 'asc' ? '↑' : '↓'}}
+                            </button>
+                        </div>
+
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700">Mostrar:</label>
+                            <select [ngModel]="itemsPorPagina" (ngModelChange)="onCambiarItemsPorPagina($event)"
+                                class="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option [value]="10">10</option>
+                                <option [value]="25">25</option>
+                                <option [value]="50">50</option>
+                                <option [value]="100">100</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid de noticias -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
+                    <app-noticia-card *ngFor="let noticia of noticiasPaginadas" [noticia]="noticia"
+                        [fechaFormateada]="formatearFecha(noticia.fecha_publicacion)"
+                        (generarResumen)="onGenerarResumen($event)"
+                        (cerrarResumen)="onCerrarResumen($event)" (abrirModalPlanes)="planesModal.abrirModal()"></app-noticia-card>
+                </div>
+                <app-chatbot></app-chatbot>
+                <!-- Paginación -->
+                <app-paginacion [paginaActual]="paginaActual" [totalPaginas]="totalPaginas"
+                    [totalResultados]="noticiasFiltradas.length" [itemsPorPagina]="itemsPorPagina"
+                    (cambiarPagina)="onCambiarPagina($event)"></app-paginacion>
+
+                <!-- Estado vacío -->
+                <div *ngIf="noticiasPaginadas.length === 0" class="bg-white rounded-lg shadow p-12 text-center">
+                    <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                        </path>
+                    </svg>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No se encontraron noticias</h3>
+                    <p class="text-gray-500 mb-4">Intenta ajustar los filtros para ver más resultados.</p>
+                    <button (click)="onLimpiarFiltros()"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                        Limpiar todos los filtrosaaa
+                    </button>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>

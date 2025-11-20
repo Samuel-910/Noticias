@@ -1,0 +1,129 @@
+<div class="chatbot-container">
+  <!-- Botón flotante para abrir/cerrar el chat -->
+  <button 
+    class="chat-toggle-btn" 
+    (click)="toggleChat()"
+    [class.active]="isOpen"
+    aria-label="Toggle chat">
+    <svg *ngIf="!isOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    <svg *ngIf="isOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+
+  <!-- Ventana del chat -->
+  <div class="chat-window" [class.open]="isOpen">
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="header-content">
+        <div class="bot-avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <div class="header-info">
+          <h3>Asistente de Noticias</h3>
+          <span class="status">En línea</span>
+        </div>
+      </div>
+      <button class="clear-btn" (click)="clearChat()" title="Limpiar chat">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1 4 1 10 7 10"></polyline>
+          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mensajes -->
+    <div class="chat-messages" #messagesContainer>
+      <div 
+        *ngFor="let message of messages; trackBy: trackByMessage" 
+        class="message-wrapper"
+        [class.user-message]="message.role === 'user'"
+        [class.bot-message]="message.role === 'bot'">
+        
+        <div class="message-avatar" *ngIf="message.role === 'bot'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+
+        <div class="message-content">
+          <div class="message-bubble">
+            {{ message.content }}
+          </div>
+
+          <!-- Mostrar noticias relacionadas si existen -->
+          <div class="related-news" *ngIf="message.noticias && message.noticias.length > 0">
+            <div class="news-header">📰 Noticias relacionadas:</div>
+            <div class="news-item" *ngFor="let noticia of message.noticias">
+              <span class="news-category">{{ noticia.categoria }}</span>
+              <h4 class="news-title">{{ noticia.titulo }}</h4>
+              <p class="news-date">{{ noticia.fecha_publicacion | date: 'short' }}</p>
+            </div>
+          </div>
+
+          <span class="message-time">{{ message.timestamp | date: 'shortTime' }}</span>
+        </div>
+
+        <div class="message-avatar" *ngIf="message.role === 'user'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Indicador de carga -->
+      <div class="message-wrapper bot-message" *ngIf="isLoading">
+        <div class="message-avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <div class="message-content">
+          <div class="message-bubble typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sugerencias rápidas -->
+    <div class="quick-suggestions" *ngIf="messages.length === 1">
+      <button 
+        *ngFor="let suggestion of quickSuggestions"
+        class="suggestion-btn"
+        (click)="useSuggestion(suggestion)">
+        {{ suggestion }}
+      </button>
+    </div>
+
+    <!-- Input -->
+    <div class="chat-input">
+      <input 
+        type="text" 
+        [(ngModel)]="userInput"
+        (keyup.enter)="sendMessage()"
+        placeholder="Escribe tu pregunta..."
+        [disabled]="isLoading">
+      <button 
+        class="send-btn" 
+        (click)="sendMessage()"
+        [disabled]="!userInput.trim() || isLoading">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

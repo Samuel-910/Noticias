@@ -1,0 +1,167 @@
+<div *ngIf="isOpen" class="fixed inset-0 z-50 overflow-y-auto" (click)="cerrarModal()">
+    <!-- Overlay -->
+    <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"></div>
+
+    <!-- Modal Container -->
+    <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="relative w-full max-w-6xl bg-gradient-to-br from-gray-900 to-black rounded-2xl shadow-2xl"
+            (click)="$event.stopPropagation()">
+
+            <!-- Botón cerrar -->
+            <button (click)="cerrarModal()"
+                class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+
+            <!-- Header -->
+            <div class="text-center pt-12 pb-8 px-6">
+                <div class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600/20 rounded-full mb-6">
+                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                        </path>
+                    </svg>
+                    <span class="text-indigo-300 text-sm font-semibold">Elige el plan perfecto para ti</span>
+                </div>
+
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
+                    Planes y Precios
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    Comienza gratis y actualiza cuando necesites más funcionalidades.
+                    Todos los planes incluyen acceso completo a la plataforma.
+                </p>
+            </div>
+
+            <!-- Plan Actual Badge -->
+            <div *ngIf="planActual" class="mx-6 mb-6 p-4 bg-green-600/20 border border-green-500/30 rounded-xl">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-white font-semibold">Plan Actual: {{ planActual.nombre }}</p>
+                        <p class="text-green-300 text-sm">{{ planActual.descripcion }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards de Planes -->
+            <div class="grid md:grid-cols-3 gap-6 px-6 pb-12">
+
+                <!-- Iterar sobre todos los planes -->
+                <div *ngFor="let plan of planes; let i = index"
+                    class="relative backdrop-blur-sm rounded-xl p-6 border transition-all duration-300" [ngClass]="{
+            'bg-white/5': !plan.destacado,
+            'bg-gradient-to-br from-indigo-600/20 to-purple-600/20 border-2 transform hover:scale-105': plan.destacado,
+            'border-white/10': !plan.actual && !plan.destacado,
+            'border-green-500 ring-2 ring-green-500': plan.actual,
+            'border-indigo-500 ring-2 ring-indigo-500/50': plan.destacado && !plan.actual,
+            'hover:border-indigo-500/50': !plan.destacado && !plan.actual
+          }">
+
+                    <!-- Badge Plan Actual -->
+                    <div *ngIf="plan.actual" class="absolute -top-3 left-1/2 -translate-x-1/2">
+                        <span class="px-4 py-1 bg-green-600 text-white text-xs font-bold rounded-full shadow-lg">
+                            ✓ Plan Actual
+                        </span>
+                    </div>
+
+                    <!-- Badge Plan Destacado -->
+                    <div *ngIf="plan.destacado && !plan.actual" class="absolute -top-3 left-1/2 -translate-x-1/2">
+                        <span
+                            class="px-4 py-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold rounded-full shadow-lg">
+                            ✨ Plan Destacado
+                        </span>
+                    </div>
+
+                    <!-- Contenido del Plan -->
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-bold text-white mb-2">{{ plan.nombre }}</h3>
+                        <p class="text-sm" [ngClass]="plan.destacado ? 'text-gray-300' : 'text-gray-400'">
+                            {{ plan.descripcion }}
+                        </p>
+                    </div>
+
+                    <!-- Precio -->
+                    <div class="mb-6">
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-5xl font-bold text-white">${{ plan.precio }}</span>
+                            <span [ngClass]="plan.destacado ? 'text-gray-300' : 'text-gray-400'">
+                                /{{ plan.periodo }}
+                            </span>
+                        </div>
+                        <!-- Precio mensual para plan anual -->
+                        <p *ngIf="plan.id === 'premium-anual'" class="text-sm text-gray-400 mt-1">
+                            Solo $6.67/mes
+                        </p>
+                    </div>
+
+                    <!-- Badge de ahorro -->
+                    <div *ngIf="plan.ahorro"
+                        class="inline-flex items-center gap-1 px-3 py-1 bg-green-600/30 rounded-full mb-6">
+                        <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                        <span class="text-green-400 text-xs font-semibold">
+                            Ahorra {{ plan.ahorro }} al año
+                        </span>
+                    </div>
+
+                    <!-- Características -->
+                    <ul class="space-y-3 mb-8">
+                        <li *ngFor="let caracteristica of plan.caracteristicas" class="flex items-start gap-3"
+                            [ngClass]="plan.destacado ? 'text-gray-200' : 'text-gray-300'">
+                            <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" [ngClass]="{
+                  'text-green-500': plan.id === 'gratis',
+                  'text-indigo-500': plan.id === 'premium-mensual',
+                  'text-green-400': plan.id === 'premium-anual'
+                }">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-sm" [ngClass]="plan.destacado ? 'font-medium' : ''">
+                                {{ caracteristica }}
+                            </span>
+                        </li>
+                    </ul>
+
+                    <!-- Botón -->
+                    <button (click)="seleccionarPlan(plan)" [disabled]="plan.actual"
+                        class="w-full py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg" [ngClass]="{
+              'bg-white/10 text-gray-400 cursor-not-allowed': plan.actual,
+              'bg-white text-gray-900 hover:bg-gray-100': !plan.actual && plan.id === 'gratis',
+              'bg-indigo-600 hover:bg-indigo-700 text-white hover:scale-105': !plan.actual && plan.id === 'premium-mensual',
+              'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white hover:shadow-xl': !plan.actual && plan.id === 'premium-anual',
+              'disabled:opacity-50': plan.actual
+            }">
+                        {{ getButtonText(plan) }}
+                    </button>
+
+                    <!-- Nota adicional para plan gratis -->
+                    <p *ngIf="plan.id === 'gratis'" class="text-center text-gray-500 text-xs mt-3">
+                        No se requiere tarjeta de crédito
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="px-6 pb-8 text-center">
+                <p class="text-gray-400 text-sm">
+                    ¿Necesitas un plan empresarial?
+                    <a href="#" class="text-indigo-400 hover:text-indigo-300 underline">Contáctanos</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>

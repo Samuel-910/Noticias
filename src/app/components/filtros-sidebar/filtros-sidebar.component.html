@@ -1,0 +1,121 @@
+<!-- src/app/components/filtros-sidebar/filtros-sidebar.component.html -->
+
+<aside class="w-full lg:w-80 space-y-6">
+    <div class="bg-white rounded-lg shadow p-6 lg:sticky lg:top-24">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Filtros</h2>
+
+        <!-- Filtro de Rango de Tiempo Rápido -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+                ⏱️ Filtro Rápido
+            </label>
+            <select [ngModel]="filtros.rangoTiempo" (ngModelChange)="onRangoTiempoChange($event)"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gradient-to-r from-blue-50 to-indigo-50">
+                <option *ngFor="let rango of rangosTiempo" [value]="rango.valor">
+                    {{rango.etiqueta}}
+                </option>
+            </select>
+        </div>
+
+        <div class="border-t border-gray-200 my-4"></div>
+
+        <!-- Búsqueda por texto -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
+            <input type="text" [ngModel]="filtros.busqueda" (ngModelChange)="onFiltroChange('busqueda', $event)"
+                placeholder="Buscar en títulos y contenido..."
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+        </div>
+
+        <!-- Filtro por categoría -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+            <select [ngModel]="filtros.categoria" (ngModelChange)="onFiltroChange('categoria', $event)"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Todas las categorías</option>
+                <option *ngFor="let cat of categorias" [value]="cat">{{cat}}</option>
+            </select>
+        </div>
+
+        <!-- Filtro por país -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">País</label>
+            <select [ngModel]="filtros.pais" (ngModelChange)="onFiltroChange('pais', $event)"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Todos los países</option>
+                <option *ngFor="let pais of paises" [value]="pais">{{pais}}</option>
+            </select>
+        </div>
+
+        <!-- Filtro por región -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Región</label>
+            <select [ngModel]="filtros.region" (ngModelChange)="onFiltroChange('region', $event)"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Todas las regiones</option>
+                <option *ngFor="let region of regiones" [value]="region">{{region}}</option>
+            </select>
+        </div>
+
+        <!-- Filtro por ciudad -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
+            <select [ngModel]="filtros.ciudad" (ngModelChange)="onFiltroChange('ciudad', $event)"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Todas las ciudades</option>
+                <option *ngFor="let ciudad of ciudades" [value]="ciudad">{{ciudad}}</option>
+            </select>
+        </div>
+
+        <!-- Filtro por tipo de noticia -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Noticia</label>
+            <select [ngModel]="filtros.tipoNoticia" (ngModelChange)="onFiltroChange('tipoNoticia', $event)"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Todos los tipos</option>
+                <option *ngFor="let tipo of tiposNoticia" [value]="tipo">{{tipo}}</option>
+            </select>
+        </div>
+
+        <!-- Filtro por idioma -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Idioma</label>
+            <select [ngModel]="filtros.idioma" (ngModelChange)="onFiltroChange('idioma', $event)"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Todos los idiomas</option>
+                <option *ngFor="let idioma of idiomas" [value]="idioma">{{idioma}}</option>
+            </select>
+        </div>
+
+        <!-- Filtro por fuente -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Fuente</label>
+            <select [ngModel]="filtros.fuente" (ngModelChange)="onFiltroChange('fuente', $event)"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Todas las fuentes</option>
+                <option *ngFor="let fuente of fuentes" [value]="fuente">{{fuente}}</option>
+            </select>
+        </div>
+
+        <!-- Filtro por rango de fechas manual -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Rango de Fechas Manual</label>
+            <div class="space-y-2">
+                <input type="date" [ngModel]="filtros.fechaInicio"
+                    (ngModelChange)="onFiltroChange('fechaInicio', $event); onFiltroChange('rangoTiempo', '')"
+                    placeholder="Fecha inicio"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+                <input type="date" [ngModel]="filtros.fechaFin"
+                    (ngModelChange)="onFiltroChange('fechaFin', $event); onFiltroChange('rangoTiempo', '')"
+                    placeholder="Fecha fin"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+            </div>
+        </div>
+
+        <!-- Botón para limpiar filtros -->
+        <button (click)="onLimpiarFiltros()"
+            class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-md transition duration-200">
+            Limpiar Filtros
+        </button>
+    </div>
+</aside>
