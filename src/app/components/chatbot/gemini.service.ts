@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GeminiService {
-  private apiKey = 'AIzaSyBNt7swAhgYqg8hP1GhNztdY22jf9TV6hI'; // Reemplazar con tu API key
+  private apiKey = 'AIzaSyC4so2iLPHKSBLTgqVp0_X2xrzI_EA5kuk'; // Reemplazar con tu API key
   private  GEMINI_MODEL = 'gemini-2.5-flash';
   private  apiUrl = `https://generativelanguage.googleapis.com/v1/models/${this.GEMINI_MODEL}:generateContent`;
 

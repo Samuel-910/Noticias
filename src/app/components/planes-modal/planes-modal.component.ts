@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { SupabaseService } from '../../services/supabase.service';
+import Swal from 'sweetalert2';
 
 export interface Plan {
   id: string;
@@ -224,28 +225,73 @@ export class PlanesModalComponent implements OnInit, OnDestroy {
     return 'Seleccionar Plan';
   }
 
-  seleccionarPlan(plan: Plan): void {
-    // No permitir seleccionar el plan actual
-    if (plan.actual) {
-      return;
-    }
+async seleccionarPlan(plan: Plan): Promise<void> {
+  // No permitir seleccionar el plan actual
+  if (plan.actual) {
+    return;
+  }
 
-    console.log('📝 Plan seleccionado:', plan.nombre);
+  console.log('📝 Plan seleccionado:', plan.nombre);
 
-    if (plan.precio === 0) {
-      // Cambiar a plan gratuito
-      alert('Cambiando a plan gratuito');
-      // Aquí implementa tu lógica para cambiar el plan
-      // await this.supabaseService.cambiarPlan(userId, 'gratis');
+  // Si es plan gratuito
+  if (plan.precio === 0) {
+
+    const user = await this.supabaseService.getCurrentUser();
+    if (!user) return;
+
+    await this.supabaseService.updateUserPlan(user.id, plan.id);
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Plan cambiado',
+      text: 'Has cambiado al plan gratuito correctamente.'
+    });
+
+    this.cerrarModal();
+    return;
+  }
+
+  // Si es Premium Mensual o Anual → confirmar
+  if (plan.nombre === 'Premium Mensual' || plan.nombre === 'Premium Anual') {
+
+    const confirm = await Swal.fire({
+      title: '¿Cambiar de plan?',
+      text: `¿Seguro que deseas activar el plan ${plan.nombre}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cambiar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    const user = await this.supabaseService.getCurrentUser();
+    if (!user) return;
+
+    const { error } = await this.supabaseService.updateUserPlan(user.id, plan.id);
+
+    if (!error) {
+      Swal.fire({
+        icon: 'success',
+        title: '¡Plan actualizado!',
+        text: `Tu plan ahora es ${plan.nombre}.`
+      });
     } else {
-      // Redirigir al checkout para planes de pago
-      alert(`Redirigiendo al checkout para el plan: ${plan.nombre} - $${plan.precio}/${plan.periodo}`);
-      // Aquí implementa tu lógica de pago
-      // this.router.navigate(['/checkout'], { queryParams: { plan: plan.id } });
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo actualizar el plan.'
+      });
     }
 
     this.cerrarModal();
+    return;
   }
+
+  // Otros planes (si existieran)
+  alert(`Redirigiendo al checkout para el plan: ${plan.nombre} - $${plan.precio}/${plan.periodo}`);
+  this.cerrarModal();
+}
 
   /**
    * Verifica si el botón debe estar deshabilitado

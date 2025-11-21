@@ -1,0 +1,90 @@
+/* src/app/components/admin-enriquecimiento/admin-enriquecimiento.component.css */
+
+/* Animación de pulsación para el botón de procesar */
+@keyframes pulse-subtle {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+button:not(:disabled):hover {
+    animation: pulse-subtle 2s infinite;
+}
+
+/* Spinner animado */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Gradiente animado para el fondo del botón */
+@keyframes gradient-x {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+button:not(:disabled) {
+    background-size: 200% 200%;
+    animation: gradient-x 3s ease infinite;
+}
+
+/* Barra de progreso animada */
+@keyframes progress-bar {
+    from {
+        width: 0%;
+    }
+}
+
+.progress-bar {
+    animation: progress-bar 1s ease-out;
+}
+
+/* Hover effects para las tarjetas de estadísticas */
+.bg-white:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Scrollbar personalizado para la lista de errores */
+.overflow-y-auto::-webkit-scrollbar {
+    width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: #fef2f2;
+    border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #fca5a5;
+    border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #f87171;
+}
+
+/* Responsive ajustments */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}

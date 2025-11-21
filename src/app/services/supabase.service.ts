@@ -49,6 +49,14 @@ export class SupabaseService {
     return data;
   }
 
+async updateUserPlan(userId: string, planId: string) {
+  const { data, error } = await this.supabase
+    .from('usuarios')
+    .update({ plan_id: planId })
+    .eq('id', userId);
+
+  return { data, error };
+}
 
   // async getNoticias(): Promise<{ data: Noticia[]; total: number }> {
   //   const allData: Noticia[] = [];
@@ -102,21 +110,33 @@ export class SupabaseService {
   // }
 
 async getNoticias(): Promise<{ data: Noticia[]; total: number }> {
-  const { data, count, error } = await supabase
+  // 1. Prepara la consulta
+  const query = supabase
     .from('noticiastodo')
-    .select('*', { count: 'exact' });
+    .select('*', { count: 'exact' })
+    // 2. FILTRO: Solo incluye registros donde 'imagen_url' NO es NULL (es decir, tienen imagen)
+    .not('imagen_url', 'is', null) 
+    // 3. ORDENA por la columna 'fecha_registro' de forma descendente 
+    .order('fecha_registro', { ascending: false }) 
+    // 4. LIMITA la respuesta a 1000 resultados.
+    .limit(1000); 
 
-  if (error) throw error;
+  // 5. Ejecuta la consulta
+  const { data, count, error } = await query;
 
-  console.log('📊 Total noticias encontradas:', count);
+  if (error) {
+      console.error('❌ Error cargando noticias:', error);
+      throw error;
+  }
+
+  console.log('📊 Total noticias en la tabla:', count); 
+  console.log('✅ Número de noticias devueltas (limitadas a 1000 con imagen):', data.length); 
 
   return {
     data: data as Noticia[],
     total: count ?? 0
   };
 }
-
-
   getAllNoticias(): Observable<Noticia[]> {
     return from(
       this.supabase

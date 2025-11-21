@@ -112,7 +112,7 @@
                 [ciudades]="opcionesFiltros.ciudades" [tiposNoticia]="opcionesFiltros.tiposNoticia"
                 [idiomas]="opcionesFiltros.idiomas" [fuentes]="opcionesFiltros.fuentes"
                 (filtrosChange)="onFiltrosChange($event)" (rangoTiempoChange)="onRangoTiempoChange($event)"
-                (limpiarFiltros)="onLimpiarFiltros()"></app-filtros-sidebar>
+                (limpiarFiltros)="onLimpiarFiltros()" (abrirModalPlanes)="planesModal.abrirModal()"(abrirModalPlanes)="planesModal.abrirModal()"></app-filtros-sidebar>
 
             <!-- Contenido principal -->
             <main class="flex-1">
@@ -156,8 +156,10 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
                     <app-noticia-card *ngFor="let noticia of noticiasPaginadas" [noticia]="noticia"
                         [fechaFormateada]="formatearFecha(noticia.fecha_publicacion)"
-                        (generarResumen)="onGenerarResumen($event)"
-                        (cerrarResumen)="onCerrarResumen($event)" (abrirModalPlanes)="planesModal.abrirModal()"></app-noticia-card>
+                        (generarResumen)="onGenerarResumen($event)" (cerrarResumen)="onCerrarResumen($event)"
+                        (abrirModalPlanes)="planesModal.abrirModal()">
+                    </app-noticia-card>
+
                 </div>
                 <app-chatbot></app-chatbot>
                 <!-- Paginación -->

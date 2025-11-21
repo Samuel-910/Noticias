@@ -1,0 +1,245 @@
+<!-- src/app/components/admin-enriquecimiento/admin-enriquecimiento.component.html -->
+
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                🤖 Enriquecimiento Automático de Noticias
+            </h1>
+            <p class="text-gray-600">
+                Usa Gemini AI para completar automáticamente imágenes, ubicación, categorías y más.
+            </p>
+        </div>
+
+        <!-- Estadísticas de la Base de Datos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+            <!-- Total de Noticias -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium text-gray-500">Total de Noticias</h3>
+                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                    </svg>
+                </div>
+                <p class="text-3xl font-bold text-gray-900">
+                    {{ estadisticasDB.totalNoticias | number }}
+                </p>
+            </div>
+
+            <!-- Noticias Completas -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium text-gray-500">Completas</h3>
+                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <p class="text-3xl font-bold text-green-600">
+                    {{ estadisticasDB.noticiasCompletas | number }}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                    {{ porcentajeCompletitud }}% del total
+                </p>
+            </div>
+
+            <!-- Noticias Incompletas -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium text-gray-500">Incompletas</h3>
+                    <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <p class="text-3xl font-bold text-yellow-600">
+                    {{ estadisticasDB.noticiasIncompletas | number }}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                    {{ 100 - porcentajeCompletitud }}% del total
+                </p>
+            </div>
+
+            <!-- Progreso -->
+            <div class="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg shadow p-6 text-white">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium">Completitud</h3>
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <p class="text-3xl font-bold">
+                    {{ porcentajeCompletitud }}%
+                </p>
+                <div class="w-full bg-white/30 rounded-full h-2 mt-3">
+                    <div class="bg-white h-2 rounded-full transition-all duration-500"
+                        [style.width.%]="porcentajeCompletitud"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalles de Campos Faltantes -->
+        <div class="bg-white rounded-lg shadow mb-8">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">📊 Campos Faltantes por Tipo</h2>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <p class="text-2xl font-bold text-gray-900">{{ estadisticasDB.sinImagen | number }}</p>
+                        <p class="text-xs text-gray-600 mt-1">Sin Imagen</p>
+                    </div>
+
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <p class="text-2xl font-bold text-gray-900">{{ estadisticasDB.sinPais | number }}</p>
+                        <p class="text-xs text-gray-600 mt-1">Sin País</p>
+                    </div>
+
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <p class="text-2xl font-bold text-gray-900">{{ estadisticasDB.sinRegion | number }}</p>
+                        <p class="text-xs text-gray-600 mt-1">Sin Región</p>
+                    </div>
+
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <p class="text-2xl font-bold text-gray-900">{{ estadisticasDB.sinCiudad | number }}</p>
+                        <p class="text-xs text-gray-600 mt-1">Sin Ciudad</p>
+                    </div>
+
+                    <div class="text-center p-4 bg-gray-50 rounded-lg">
+                        <p class="text-2xl font-bold text-gray-900">{{ estadisticasDB.sinCategoria | number }}</p>
+                        <p class="text-xs text-gray-600 mt-1">Sin Categoría</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Control -->
+        <div class="bg-white rounded-lg shadow mb-8">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">⚙️ Configuración del Proceso</h2>
+            </div>
+            <div class="p-6">
+
+                <!-- Configuración -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Número de noticias a procesar
+                    </label>
+                    <input type="number" [(ngModel)]="limiteProcesamiento" [disabled]="procesando" min="1" max="500"
+                        class="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <p class="text-xs text-gray-500 mt-1">
+                        Recomendado: 50-100 noticias por lote para evitar timeouts
+                    </p>
+                </div>
+
+                <!-- Botón de Inicio -->
+                <button (click)="iniciarEnriquecimiento()" [disabled]="procesando" [class.opacity-50]="procesando"
+                    [class.cursor-not-allowed]="procesando"
+                    class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition duration-200 flex items-center gap-3">
+
+                    <svg *ngIf="!procesando" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+
+                    <svg *ngIf="procesando" class="animate-spin w-5 h-5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+
+                    <span *ngIf="!procesando">🚀 Iniciar Enriquecimiento</span>
+                    <span *ngIf="procesando">⏳ Procesando...</span>
+                </button>
+
+                <div *ngIf="procesando" class="mt-4 p-4 bg-blue-50 rounded-lg">
+                    <p class="text-sm text-blue-800 font-medium mb-2">
+                        ⏳ Procesando noticias... Por favor espera.
+                    </p>
+                    <p class="text-xs text-blue-600">
+                        Este proceso puede tomar varios minutos. No cierres esta ventana.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Resultados del Último Proceso -->
+        <div *ngIf="estadisticas.total > 0" class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">📈 Resultados del Último Proceso</h2>
+            </div>
+            <div class="p-6">
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <p class="text-sm text-blue-600 font-medium">Procesadas</p>
+                        <p class="text-2xl font-bold text-blue-900">
+                            {{ estadisticas.procesadas }}/{{ estadisticas.total }}
+                        </p>
+                    </div>
+
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <p class="text-sm text-green-600 font-medium">Exitosas</p>
+                        <p class="text-2xl font-bold text-green-900">{{ estadisticas.exitosas }}</p>
+                    </div>
+
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <p class="text-sm text-red-600 font-medium">Fallidas</p>
+                        <p class="text-2xl font-bold text-red-900">{{ estadisticas.fallidas }}</p>
+                    </div>
+
+                </div>
+
+                <!-- Lista de Errores -->
+                <div *ngIf="estadisticas.errores.length > 0" class="mt-6">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-3">⚠️ Errores Encontrados:</h3>
+                    <div class="bg-red-50 rounded-lg p-4 max-h-64 overflow-y-auto">
+                        <div *ngFor="let error of estadisticas.errores; let i = index"
+                            class="mb-2 pb-2 border-b border-red-200 last:border-0">
+                            <p class="text-sm text-red-800">
+                                <span class="font-semibold">{{ i + 1 }}.</span>
+                                ID: {{ error.noticia_id }}
+                            </p>
+                            <p class="text-xs text-red-600 ml-4">{{ error.error }}</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Información Adicional -->
+        <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <div class="flex items-start gap-3">
+                <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                    <h3 class="text-sm font-semibold text-blue-900 mb-2">ℹ️ Información Importante</h3>
+                    <ul class="text-sm text-blue-800 space-y-1">
+                        <li>• Este proceso usa la API de Gemini para analizar y completar datos faltantes</li>
+                        <li>• Se procesan las noticias en lotes de 5 para evitar saturar la API</li>
+                        <li>• Los datos se guardan automáticamente en Supabase</li>
+                        <li>• Se recomienda procesar 50-100 noticias a la vez</li>
+                        <li>• El proceso puede tardar entre 2-5 minutos dependiendo de la cantidad</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

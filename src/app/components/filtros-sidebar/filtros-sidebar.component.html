@@ -4,7 +4,7 @@
     <div class="bg-white rounded-lg shadow p-6 lg:sticky lg:top-24">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Filtros</h2>
 
-        <!-- Filtro de Rango de Tiempo Rápido -->
+        <!-- Filtro de Rango de Tiempo Rápido (GRATUITO) -->
         <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 ⏱️ Filtro Rápido
@@ -19,7 +19,7 @@
 
         <div class="border-t border-gray-200 my-4"></div>
 
-        <!-- Búsqueda por texto -->
+        <!-- Búsqueda por texto (GRATUITO) -->
         <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
             <input type="text" [ngModel]="filtros.busqueda" (ngModelChange)="onFiltroChange('busqueda', $event)"
@@ -27,7 +27,7 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
         </div>
 
-        <!-- Filtro por categoría -->
+        <!-- Filtro por categoría (GRATUITO) -->
         <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
             <select [ngModel]="filtros.categoria" (ngModelChange)="onFiltroChange('categoria', $event)"
@@ -37,7 +37,7 @@
             </select>
         </div>
 
-        <!-- Filtro por país -->
+        <!-- Filtro por país (GRATUITO) -->
         <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">País</label>
             <select [ngModel]="filtros.pais" (ngModelChange)="onFiltroChange('pais', $event)"
@@ -47,70 +47,194 @@
             </select>
         </div>
 
-        <!-- Filtro por región -->
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Región</label>
-            <select [ngModel]="filtros.region" (ngModelChange)="onFiltroChange('region', $event)"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Todas las regiones</option>
-                <option *ngFor="let region of regiones" [value]="region">{{region}}</option>
-            </select>
+        <div class="border-t border-gray-200 my-4"></div>
+
+        <!-- Sección de Filtros Premium -->
+        <div class="mb-4 p-3 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg border border-yellow-200">
+            <div class="flex items-center gap-2 mb-2">
+                <svg class="w-5 h-5 text-yellow-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7.4-6.3-4.6-6.3 4.6 2.3-7.4-6-4.6h7.6z"/>
+                </svg>
+                <span class="text-sm font-semibold text-gray-800">Filtros Avanzados</span>
+                <span *ngIf="esPremium" class="text-xs bg-yellow-500 text-white px-2 py-0.5 rounded-full">PREMIUM</span>
+            </div>
+            <p class="text-xs text-gray-600">
+                <span *ngIf="!esPremium">Los siguientes filtros requieren una cuenta Premium</span>
+                <span *ngIf="esPremium">Tienes acceso completo a todos los filtros</span>
+            </p>
         </div>
 
-        <!-- Filtro por ciudad -->
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
-            <select [ngModel]="filtros.ciudad" (ngModelChange)="onFiltroChange('ciudad', $event)"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Todas las ciudades</option>
-                <option *ngFor="let ciudad of ciudades" [value]="ciudad">{{ciudad}}</option>
-            </select>
+        <!-- Filtro por región (PREMIUM) -->
+        <div class="mb-6 relative">
+            <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                Región
+                <svg *ngIf="!esPremium" class="w-4 h-4 text-yellow-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7.4-6.3-4.6-6.3 4.6 2.3-7.4-6-4.6h7.6z"/>
+                </svg>
+            </label>
+            <div [class.premium-overlay]="!esPremium">
+                <select 
+                    [ngModel]="filtros.region" 
+                    (ngModelChange)="onFiltroChange('region', $event)"
+                    (click)="onFiltroPremiumClick($event, 'region')"
+                    [disabled]="!esPremium"
+                    [class.cursor-not-allowed]="!esPremium"
+                    [class.opacity-60]="!esPremium"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Todas las regiones</option>
+                    <option *ngFor="let region of regiones" [value]="region">{{region}}</option>
+                </select>
+            </div>
         </div>
 
-        <!-- Filtro por tipo de noticia -->
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Noticia</label>
-            <select [ngModel]="filtros.tipoNoticia" (ngModelChange)="onFiltroChange('tipoNoticia', $event)"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Todos los tipos</option>
-                <option *ngFor="let tipo of tiposNoticia" [value]="tipo">{{tipo}}</option>
-            </select>
+        <!-- Filtro por ciudad (PREMIUM) -->
+        <div class="mb-6 relative">
+            <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                Ciudad
+                <svg *ngIf="!esPremium" class="w-4 h-4 text-yellow-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7.4-6.3-4.6-6.3 4.6 2.3-7.4-6-4.6h7.6z"/>
+                </svg>
+            </label>
+            <div [class.premium-overlay]="!esPremium">
+                <select 
+                    [ngModel]="filtros.ciudad" 
+                    (ngModelChange)="onFiltroChange('ciudad', $event)"
+                    (click)="onFiltroPremiumClick($event, 'ciudad')"
+                    [disabled]="!esPremium"
+                    [class.cursor-not-allowed]="!esPremium"
+                    [class.opacity-60]="!esPremium"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Todas las ciudades</option>
+                    <option *ngFor="let ciudad of ciudades" [value]="ciudad">{{ciudad}}</option>
+                </select>
+            </div>
         </div>
 
-        <!-- Filtro por idioma -->
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Idioma</label>
-            <select [ngModel]="filtros.idioma" (ngModelChange)="onFiltroChange('idioma', $event)"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Todos los idiomas</option>
-                <option *ngFor="let idioma of idiomas" [value]="idioma">{{idioma}}</option>
-            </select>
+        <!-- Filtro por tipo de noticia (PREMIUM) -->
+        <div class="mb-6 relative">
+            <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                Tipo de Noticia
+                <svg *ngIf="!esPremium" class="w-4 h-4 text-yellow-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7.4-6.3-4.6-6.3 4.6 2.3-7.4-6-4.6h7.6z"/>
+                </svg>
+            </label>
+            <div [class.premium-overlay]="!esPremium">
+                <select 
+                    [ngModel]="filtros.tipoNoticia" 
+                    (ngModelChange)="onFiltroChange('tipoNoticia', $event)"
+                    (click)="onFiltroPremiumClick($event, 'tipoNoticia')"
+                    [disabled]="!esPremium"
+                    [class.cursor-not-allowed]="!esPremium"
+                    [class.opacity-60]="!esPremium"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Todos los tipos</option>
+                    <option *ngFor="let tipo of tiposNoticia" [value]="tipo">{{tipo}}</option>
+                </select>
+            </div>
         </div>
 
-        <!-- Filtro por fuente -->
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Fuente</label>
-            <select [ngModel]="filtros.fuente" (ngModelChange)="onFiltroChange('fuente', $event)"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Todas las fuentes</option>
-                <option *ngFor="let fuente of fuentes" [value]="fuente">{{fuente}}</option>
-            </select>
+        <!-- Filtro por idioma (PREMIUM) -->
+        <div class="mb-6 relative">
+            <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                Idioma
+                <svg *ngIf="!esPremium" class="w-4 h-4 text-yellow-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7.4-6.3-4.6-6.3 4.6 2.3-7.4-6-4.6h7.6z"/>
+                </svg>
+            </label>
+            <div [class.premium-overlay]="!esPremium">
+                <select 
+                    [ngModel]="filtros.idioma" 
+                    (ngModelChange)="onFiltroChange('idioma', $event)"
+                    (click)="onFiltroPremiumClick($event, 'idioma')"
+                    [disabled]="!esPremium"
+                    [class.cursor-not-allowed]="!esPremium"
+                    [class.opacity-60]="!esPremium"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Todos los idiomas</option>
+                    <option *ngFor="let idioma of idiomas" [value]="idioma">{{idioma}}</option>
+                </select>
+            </div>
         </div>
 
-        <!-- Filtro por rango de fechas manual -->
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Rango de Fechas Manual</label>
-            <div class="space-y-2">
-                <input type="date" [ngModel]="filtros.fechaInicio"
+        <!-- Filtro por fuente (PREMIUM) -->
+        <div class="mb-6 relative">
+            <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                Fuente
+                <svg *ngIf="!esPremium" class="w-4 h-4 text-yellow-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7.4-6.3-4.6-6.3 4.6 2.3-7.4-6-4.6h7.6z"/>
+                </svg>
+            </label>
+            <div [class.premium-overlay]="!esPremium">
+                <select 
+                    [ngModel]="filtros.fuente" 
+                    (ngModelChange)="onFiltroChange('fuente', $event)"
+                    (click)="onFiltroPremiumClick($event, 'fuente')"
+                    [disabled]="!esPremium"
+                    [class.cursor-not-allowed]="!esPremium"
+                    [class.opacity-60]="!esPremium"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Todas las fuentes</option>
+                    <option *ngFor="let fuente of fuentes" [value]="fuente">{{fuente}}</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Filtro por rango de fechas manual (PREMIUM) -->
+        <div class="mb-6 relative">
+            <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                Rango de Fechas Manual
+                <svg *ngIf="!esPremium" class="w-4 h-4 text-yellow-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7.4-6.3-4.6-6.3 4.6 2.3-7.4-6-4.6h7.6z"/>
+                </svg>
+            </label>
+            <div class="space-y-2" [class.premium-overlay]="!esPremium">
+                <input 
+                    type="date" 
+                    [ngModel]="filtros.fechaInicio"
                     (ngModelChange)="onFiltroChange('fechaInicio', $event); onFiltroChange('rangoTiempo', '')"
+                    (click)="onFiltroPremiumClick($event, 'fechaInicio')"
+                    [disabled]="!esPremium"
+                    [class.cursor-not-allowed]="!esPremium"
+                    [class.opacity-60]="!esPremium"
                     placeholder="Fecha inicio"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
-                <input type="date" [ngModel]="filtros.fechaFin"
+                <input 
+                    type="date" 
+                    [ngModel]="filtros.fechaFin"
                     (ngModelChange)="onFiltroChange('fechaFin', $event); onFiltroChange('rangoTiempo', '')"
+                    (click)="onFiltroPremiumClick($event, 'fechaFin')"
+                    [disabled]="!esPremium"
+                    [class.cursor-not-allowed]="!esPremium"
+                    [class.opacity-60]="!esPremium"
                     placeholder="Fecha fin"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
             </div>
         </div>
+
+        <!-- Banner de actualización a Premium (solo si no es premium) -->
+        <div *ngIf="!esPremium" class="mb-6 p-4 bg-gradient-to-br from-yellow-100 to-amber-100 rounded-lg border-2 border-yellow-300">
+            <div class="flex items-start gap-3">
+                <svg class="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7.4-6.3-4.6-6.3 4.6 2.3-7.4-6-4.6h7.6z"/>
+                </svg>
+                <div class="flex-1">
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">Desbloquea Filtros Avanzados</h3>
+                    <p class="text-xs text-gray-700 mb-3">
+                        Accede a filtros por región, ciudad, tipo, idioma, fuente y fechas personalizadas.
+                    </p>
+                    <button 
+                        (click)="abrirModalPlanes.emit()"
+                        class="w-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white font-semibold py-2 px-4 rounded-md transition duration-200 text-sm flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7.4-6.3-4.6-6.3 4.6 2.3-7.4-6-4.6h7.6z"/>
+                        </svg>
+                        Actualizar a Premium
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-200 my-4"></div>
 
         <!-- Botón para limpiar filtros -->
         <button (click)="onLimpiarFiltros()"

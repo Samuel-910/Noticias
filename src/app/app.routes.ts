@@ -3,6 +3,7 @@ import { NoticiasPortalComponent } from './components/noticias-portal/noticias-p
 import { authRoutes } from './authentication/auth.routes';
 import { HistorialComponent } from './components/historial/historial.component';
 import { FavoritosComponent } from './components/favoritos/favoritos.component';
+import { AdminEnriquecimientoComponent } from './components/admin-enriquecimiento/admin-enriquecimiento.component';
 
 export const routes: Routes = [
     { path: '', component: NoticiasPortalComponent },
@@ -14,5 +15,9 @@ export const routes: Routes = [
         ]
     },
     { path: 'historial', component: HistorialComponent },
-    { path: 'favoritos', component: FavoritosComponent }
+    { path: 'favoritos', component: FavoritosComponent },
+      {
+    path: 'admin/enriquecimiento',
+    component: AdminEnriquecimientoComponent
+  }
 ];
